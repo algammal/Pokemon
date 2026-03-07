@@ -11,6 +11,6 @@ export const fetchPokemon = createAsyncThunk(
     );
 
     const data = await res.json();
-    return data.results;
+    return { results: data.results, count: data.count };
   }
 );

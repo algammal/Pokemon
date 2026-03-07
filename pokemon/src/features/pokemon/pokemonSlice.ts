@@ -1,9 +1,15 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { fetchPokemon } from "./pokemonThunks";
 
+interface Pokemon {
+  name: string;
+  url: string;
+}
+
 interface PokemonState {
-  pokemon: any[];
+  pokemon: Pokemon[];
   page: number;
+  count: number;
   loading: boolean;
   error: string | null;
 }
@@ -11,6 +17,7 @@ interface PokemonState {
 const initialState: PokemonState = {
   pokemon: [],
   page: 1,
+  count: 0,
   loading: false,
   error: null,
 };
@@ -19,6 +26,9 @@ const pokemonSlice = createSlice({
   name: "pokemon",
   initialState,
   reducers: {
+    setPage: (state, action: PayloadAction<number>) => {
+      state.page = action.payload;
+    },
     nextPage: (state) => {
       state.page += 1;
     },
@@ -33,7 +43,8 @@ const pokemonSlice = createSlice({
       })
       .addCase(fetchPokemon.fulfilled, (state, action) => {
         state.loading = false;
-        state.pokemon = action.payload;
+        state.pokemon = action.payload.results;
+        state.count = action.payload.count;
       })
       .addCase(fetchPokemon.rejected, (state) => {
         state.loading = false;
@@ -42,5 +53,5 @@ const pokemonSlice = createSlice({
   },
 });
 
-export const { nextPage, prevPage } = pokemonSlice.actions;
+export const { nextPage, prevPage, setPage } = pokemonSlice.actions;
 export default pokemonSlice.reducer;

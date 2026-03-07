@@ -3,39 +3,77 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchPokemon } from "../features/pokemon/pokemonThunks";
 import type { RootState, AppDispatch } from "../stores/store";
 import PokemonCard from "../components/PokemonCard";
+import Pagination from "../components/Pagination";
+import {setTab} from "../features/tabs/tabs";
+import enums from "../enums/enums";
 
 const PokemonList = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { pokemon, page, loading, error } = useSelector(
+  const { pokemon, page, count, loading, error } = useSelector(
     (state: RootState) => state.pokemon
   );
-
+  const tab = useSelector((state: RootState) => state.tabs.tab);
   useEffect(() => {
     dispatch(fetchPokemon(page));
-  }, [dispatch, page]);
+  }, [dispatch, page,tab]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
-
+  const totalPages = Math.ceil(count / 20) || 1;
+  const handleTabChange = (tabName: typeof enums.tabs[keyof typeof enums.tabs])=>{
+    dispatch(setTab(tabName))
+  }
   return (
-   <div className="pokemon-ListPage">
-    <div className="pokemon-header">
-    <h1>Poke`dex</h1>
-    <span>Discover and explore Pokemon with infinite scroll</span>
+    <div className="min-h-screen bg-[#f3f7fb] py-12 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 flex items-center justify-center gap-2 mb-3">
+            {enums.pageText.TITlE}
+          </h1>
+          <p className="text-gray-500 text-sm font-medium">{enums.pageText.SUB_TITLE}</p>
+        </div>
+
+        <div className="flex justify-center mb-10">
+          <div className="bg-white rounded-md p-1 inline-flex shadow-sm gap-1">
+            <button onClick={()=>handleTabChange(enums.tabs.PAGE_CONTROL)} className={`text-sm font-medium px-4 py-2 rounded-md transition-colors ${
+    tab === enums.tabs.PAGE_CONTROL
+      ? "bg-[#111827] text-white"
+      : "bg-transparent text-gray-500 hover:bg-gray-100"
+  }`}>
+              {enums.tabs.PAGE_CONTROL}
+            </button>
+            <button onClick={()=>handleTabChange(enums.tabs.INFINITE_SCROLL)} className={`text-sm font-medium px-4 py-2 rounded-md transition-colors ${
+    tab === enums.tabs.INFINITE_SCROLL
+      ? "bg-[#111827] text-white"
+      : "bg-transparent text-gray-500 hover:bg-gray-100"
+  }`}>
+              {enums.tabs.INFINITE_SCROLL}
+            </button>
+          </div>
+        </div>
+
+        {error && <p className="text-center text-red-500 my-8">{error}</p>}
+
+        {loading  ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-900 border-t-transparent"></div>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+              {pokemon.map((p) => (
+                <PokemonCard key={p.name} name={p.name} url={p.url} />
+              ))}
+            </div>
+            {
+                tab== enums.tabs.PAGE_CONTROL?(
+                     <Pagination page={page} totalPages={totalPages} pokemonCount={pokemon.length} />
+                ):<button className="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-[#111827] text-white">Load More</button>
+            }
+           
+          </>
+        )}
+      </div>
     </div>
-    <div className="pokemon-headerButtons">
-        <button>Page Controls</button>
-        <button>Infinite Scroll</button>
-    </div>
-    <div className="PokemonList">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-      {pokemon.map((p) => (
-        <PokemonCard key={p.name} name={p.name} url={p.url} />
-      ))}
-    </div>
-    </div>
-   </div>
   );
 };
 
