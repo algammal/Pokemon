@@ -36,9 +36,6 @@ const pokemonSlice = createSlice({
     prevPage: (state) => {
       if (state.page > 1) state.page -= 1;
     },
-    isFiniteScroll:(state) => {
-      state.page += 1;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -59,5 +56,5 @@ const pokemonSlice = createSlice({
   },
 });
 
-export const { nextPage,isFiniteScroll, prevPage, setPage } = pokemonSlice.actions;
+export const { nextPage, prevPage, setPage } = pokemonSlice.actions;
 export default pokemonSlice.reducer;
