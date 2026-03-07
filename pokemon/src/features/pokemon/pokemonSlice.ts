@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { fetchPokemon } from "./pokemonThunks";
+import enums from "../../enums/enums";
 
 interface Pokemon {
   name: string;
@@ -45,10 +46,12 @@ const pokemonSlice = createSlice({
         state.loading = false;
         state.pokemon = action.payload.results;
         state.count = action.payload.count;
+        state.error = null
       })
       .addCase(fetchPokemon.rejected, (state) => {
         state.loading = false;
-        state.error = "Failed to fetch pokemon";
+        state.error = enums.error.FETCH_POKEMONAPI_ERROR;
+        state.pokemon = []
       });
   },
 });
