@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setPage, prevPage, nextPage } from "../features/pokemon/pokemonSlice";
+import { fetchPokemon } from "../features/pokemon/pokemonThunks";
 import type { AppDispatch, RootState } from "../stores/store";
 import enums from "../enums/enums";
 
@@ -26,7 +27,12 @@ const Pagination = ({ page, totalPages, pokemonCount, error, loading }: Paginati
 
     return (
         <div className="flex flex-col items-center gap-4">
-            {
+            {error ? (<button
+                onClick={() => dispatch(fetchPokemon({ page, isAppend: tab === enums.tabs.INFINITE_SCROLL && page > 1 }))}
+                className="px-4 py-2 bg-red-500 text-white rounded"
+            >
+                {enums.buttons.RETRY}
+            </button>) :
                 tab == enums.tabs.PAGE_CONTROL ? (
                     <div>
                         <div className="flex flex-wrap items-center justify-center gap-2">
@@ -68,12 +74,7 @@ const Pagination = ({ page, totalPages, pokemonCount, error, loading }: Paginati
                     </div>
 
 
-                ) : error ? <button
-                    onClick={() => dispatch(nextPage())}
-                    className="px-4 py-2 bg-red-500 text-white rounded"
-                >
-                    {enums.buttons.RETRY}
-                </button> : <button
+                ) : <button
                     onClick={() => dispatch(nextPage())}
                     disabled={loading || page === totalPages}
                     className="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-[#111827] text-white flex items-center justify-center gap-2"
