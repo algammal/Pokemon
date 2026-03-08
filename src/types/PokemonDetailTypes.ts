@@ -1,5 +1,33 @@
+export interface PokemonType {
+    type: {
+        name: string;
+        url?: string;
+    };
+}
+
+export interface PokemonSprites {
+    front_default: string;
+    other?: {
+        "official-artwork"?: {
+            front_default: string;
+        };
+    };
+}
+
+export interface PokemonDetailData {
+    id: number;
+    name: string;
+    sprites: PokemonSprites;
+    types: PokemonType[];
+    height: number;
+    weight: number;
+    stats: Stat[];
+    abilities: Ability[];
+    base_experience: number;
+}
+
 export interface PokemonDetailState {
-    data: any | null;
+    data: PokemonDetailData | null;
     loading: boolean;
     error: string | null;
 }
@@ -19,8 +47,12 @@ export interface DimensionsProps {
 }
 
 export interface Ability {
-    ability: { name: string };
-    is_hidden: boolean;
+    ability: {
+        name: string
+        url: string
+    }
+    is_hidden: boolean
+    slot: number
 }
 
 export interface AbilitiesProps {
@@ -32,5 +64,5 @@ export interface BaseExperienceProps {
 }
 
 export interface PokemonDetailCardProps {
-    data: any;
+    data: PokemonDetailData;
 }

@@ -1,9 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import type { FetchPokemonArgs } from "../../types/PokemonListTypes"
 
 export const fetchPokemon = createAsyncThunk(
   "pokemon/fetchPokemon",
-  async (page: number) => {
-    const limit = 10;
+  async ({ page, isAppend }: FetchPokemonArgs) => {
+    const limit = 20;
     const offset = (page - 1) * limit;
 
     const res = await fetch(
@@ -11,6 +12,6 @@ export const fetchPokemon = createAsyncThunk(
     );
 
     const data = await res.json();
-    return { results: data.results, count: data.count };
+    return { results: data.results, count: data.count, isAppend };
   }
 );
