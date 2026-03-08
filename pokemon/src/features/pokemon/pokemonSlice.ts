@@ -1,16 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { fetchPokemon } from "./pokemonThunks";
+import enums from "../../enums/enums";
 
-interface PokemonState {
-  pokemon: any[];
-  page: number;
-  loading: boolean;
-  error: string | null;
-}
+import type { PokemonState } from "../../types/PokemonListTypes";
 
 const initialState: PokemonState = {
   pokemon: [],
   page: 1,
+  count: 0,
   loading: false,
   error: null,
 };
@@ -19,6 +16,9 @@ const pokemonSlice = createSlice({
   name: "pokemon",
   initialState,
   reducers: {
+    setPage: (state, action: PayloadAction<number>) => {
+      state.page = action.payload;
+    },
     nextPage: (state) => {
       state.page += 1;
     },
@@ -33,14 +33,17 @@ const pokemonSlice = createSlice({
       })
       .addCase(fetchPokemon.fulfilled, (state, action) => {
         state.loading = false;
-        state.pokemon = action.payload;
+        state.pokemon = action.payload.results;
+        state.count = action.payload.count;
+        state.error = null
       })
       .addCase(fetchPokemon.rejected, (state) => {
         state.loading = false;
-        state.error = "Failed to fetch pokemon";
+        state.error = enums.error.FETCH_POKEMONAPI_ERROR;
+        state.pokemon = []
       });
   },
 });
 
-export const { nextPage, prevPage } = pokemonSlice.actions;
+export const { nextPage, prevPage, setPage } = pokemonSlice.actions;
 export default pokemonSlice.reducer;
