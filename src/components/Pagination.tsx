@@ -5,7 +5,7 @@ import enums from "../enums/enums";
 
 import type { PaginationProps } from "../types/PokemonListTypes";
 
-const Pagination = ({ page, totalPages, pokemonCount, error }: PaginationProps) => {
+const Pagination = ({ page, totalPages, pokemonCount, error, loading }: PaginationProps) => {
     const dispatch = useDispatch<AppDispatch>();
     const tab = useSelector((state: RootState) => state.tabs.tab);
     const getPaginationGroup = () => {
@@ -69,11 +69,20 @@ const Pagination = ({ page, totalPages, pokemonCount, error }: PaginationProps) 
 
 
                 ) : error ? <button
-                    onClick={() => dispatch(prevPage())}
+                    onClick={() => dispatch(nextPage())}
                     className="px-4 py-2 bg-red-500 text-white rounded"
                 >
-                    Retry
-                </button> : <button onClick={() => dispatch(nextPage())} className="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-[#111827] text-white">{enums.buttons.LOADMORE}</button>
+                    {enums.buttons.RETRY}
+                </button> : <button
+                    onClick={() => dispatch(nextPage())}
+                    disabled={loading || page === totalPages}
+                    className="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-[#111827] text-white flex items-center justify-center gap-2"
+                >
+                    {loading && (
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    )}
+                    {enums.buttons.LOADMORE}
+                </button>
             }
         </div>
     );

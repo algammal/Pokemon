@@ -24,7 +24,7 @@ const typeColors: Record<string, string> = {
     fairy: "bg-pink-300",
 };
 
-import type { PokemonDetailCardProps } from "../types/PokemonDetailTypes";
+import type { PokemonDetailCardProps, PokemonType } from "../types/PokemonDetailTypes";
 
 const PokemonDetailCard = ({ data }: PokemonDetailCardProps) => {
     const paddedId = String(data.id).padStart(3, "0");
@@ -51,7 +51,7 @@ const PokemonDetailCard = ({ data }: PokemonDetailCardProps) => {
                         />
                     </div>
                     <div className="flex gap-2 mb-8">
-                        {data.types.map((t: any) => (
+                        {data.types.map((t: PokemonType) => (
                             <span
                                 key={t.type.name}
                                 className={`${typeColors[t.type.name] || "bg-gray-500"} text-white text-xs font-bold px-4 py-1.5 rounded-full capitalize`}

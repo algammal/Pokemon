@@ -20,6 +20,7 @@ const enums = {
     NEXT: "Next",
     PREVIOUS: "Previous",
     BACK_TO_LIST: "Back to List",
+    RETRY:'Retry'
   },
   error: {
     FETCH_POKEMONAPI_ERROR: "Failed to fetch pokemon",
