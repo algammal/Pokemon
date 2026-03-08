@@ -5,6 +5,9 @@ import type { RootState, AppDispatch } from "../stores/store";
 import PokemonCard from "../components/PokemonCard";
 import Pagination from "../components/Pagination";
 import { setTab } from "../features/tabs/tabs";
+import { setPage } from "../features/pokemon/pokemonSlice";
+import PokemonCardSkeleton from "../components/PokemonCardSkeleton";
+import type { Pokemon } from '../types/pokemon'
 import enums from "../enums/enums";
 
 const PokemonList = () => {
@@ -15,17 +18,25 @@ const PokemonList = () => {
   );
   const tab = useSelector((state: RootState) => state.tabs.tab);
   useEffect(() => {
-    dispatch(fetchPokemon(page));
+    dispatch(
+      fetchPokemon({
+        page,
+        isAppend: tab === enums.tabs.INFINITE_SCROLL && page > 1,
+      })
+    );
   }, [dispatch, page, tab]);
 
   const totalPages = Math.ceil(count / 20) || 1;
   const handleTabChange = (
     tabName: (typeof enums.tabs)[keyof typeof enums.tabs],
   ) => {
-    dispatch(setTab(tabName));
+    if (tab !== tabName) {
+      dispatch(setTab(tabName));
+      dispatch(setPage(1));
+    }
   };
   return (
-    <div className="min-h-screen bg-[#f3f7fb] py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className={`min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-sans transition-colors duration-300 ${tab === enums.tabs.INFINITE_SCROLL ? 'bg-[#f0fdf4]' : 'bg-[#f3f7fb]'}`}>
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 flex items-center justify-center gap-2 mb-3">
@@ -40,21 +51,19 @@ const PokemonList = () => {
           <div className="bg-white rounded-md p-1 inline-flex shadow-sm gap-1">
             <button
               onClick={() => handleTabChange(enums.tabs.PAGE_CONTROL)}
-              className={`text-sm font-medium px-4 py-2 rounded-md transition-colors ${
-                tab === enums.tabs.PAGE_CONTROL
-                  ? "bg-[#111827] text-white"
-                  : "bg-transparent text-gray-500 hover:bg-gray-100"
-              }`}
+              className={`text-sm font-medium px-4 py-2 rounded-md transition-colors ${tab === enums.tabs.PAGE_CONTROL
+                ? "bg-[#111827] text-white"
+                : "bg-transparent text-gray-500 hover:bg-gray-100"
+                }`}
             >
               {enums.tabs.PAGE_CONTROL}
             </button>
             <button
               onClick={() => handleTabChange(enums.tabs.INFINITE_SCROLL)}
-              className={`text-sm font-medium px-4 py-2 rounded-md transition-colors ${
-                tab === enums.tabs.INFINITE_SCROLL
-                  ? "bg-[#111827] text-white"
-                  : "bg-transparent text-gray-500 hover:bg-gray-100"
-              }`}
+              className={`text-sm font-medium px-4 py-2 rounded-md transition-colors ${tab === enums.tabs.INFINITE_SCROLL
+                ? "bg-[#111827] text-white"
+                : "bg-transparent text-gray-500 hover:bg-gray-100"
+                }`}
             >
               {enums.tabs.INFINITE_SCROLL}
             </button>
@@ -63,15 +72,17 @@ const PokemonList = () => {
 
         {error && <p className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md">{error}</p>}
 
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-900 border-t-transparent"></div>
+        {loading && (tab === enums.tabs.PAGE_CONTROL || page === 1) ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+            {Array.from({ length: 20 }).map((_, index: number) => (
+              <PokemonCardSkeleton key={`skeleton-${index}`} />
+            ))}
           </div>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-              {pokemon.map((p) => (
-                <PokemonCard key={p.name} name={p.name} url={p.url}/>
+              {pokemon.map((pokemon: Pokemon, key: number) => (
+                <PokemonCard key={key} name={pokemon.name} url={pokemon.url} />
               ))}
             </div>
             <Pagination
@@ -79,6 +90,7 @@ const PokemonList = () => {
               totalPages={totalPages}
               pokemonCount={pokemon.length}
               error={error}
+              loading={loading}
             />
           </>
         )}

@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import './App.css'
 import PokemonList from './pages/PokemonList'
 import PokemonDetail from './pages/PokemonDetail'
 

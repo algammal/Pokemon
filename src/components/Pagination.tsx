@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setPage, prevPage, nextPage } from "../features/pokemon/pokemonSlice";
+import { fetchPokemon } from "../features/pokemon/pokemonThunks";
 import type { AppDispatch, RootState } from "../stores/store";
 import enums from "../enums/enums";
 
 import type { PaginationProps } from "../types/PokemonListTypes";
 
-const Pagination = ({ page, totalPages, pokemonCount, error }: PaginationProps) => {
+const Pagination = ({ page, totalPages, pokemonCount, error, loading }: PaginationProps) => {
     const dispatch = useDispatch<AppDispatch>();
     const tab = useSelector((state: RootState) => state.tabs.tab);
     const getPaginationGroup = () => {
@@ -26,7 +27,12 @@ const Pagination = ({ page, totalPages, pokemonCount, error }: PaginationProps) 
 
     return (
         <div className="flex flex-col items-center gap-4">
-            {
+            {error ? (<button
+                onClick={() => dispatch(fetchPokemon({ page, isAppend: tab === enums.tabs.INFINITE_SCROLL && page > 1 }))}
+                className="px-4 py-2 bg-red-500 text-white rounded"
+            >
+                {enums.buttons.RETRY}
+            </button>) :
                 tab == enums.tabs.PAGE_CONTROL ? (
                     <div>
                         <div className="flex flex-wrap items-center justify-center gap-2">
@@ -68,12 +74,16 @@ const Pagination = ({ page, totalPages, pokemonCount, error }: PaginationProps) 
                     </div>
 
 
-                ) : error ? <button
-                    onClick={() => dispatch(prevPage())}
-                    className="px-4 py-2 bg-red-500 text-white rounded"
+                ) : <button
+                    onClick={() => dispatch(nextPage())}
+                    disabled={loading || page === totalPages}
+                    className="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-[#111827] text-white flex items-center justify-center gap-2"
                 >
-                    Retry
-                </button> : <button onClick={() => dispatch(nextPage())} className="text-sm font-medium px-4 py-2 rounded-md transition-colors bg-[#111827] text-white">{enums.buttons.LOADMORE}</button>
+                    {loading && (
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                    )}
+                    {enums.buttons.LOADMORE}
+                </button>
             }
         </div>
     );

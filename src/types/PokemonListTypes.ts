@@ -21,4 +21,10 @@ export interface PaginationProps {
     totalPages: number;
     pokemonCount: number;
     error?: string | null;
+    loading?: boolean;
+}
+
+export interface FetchPokemonArgs {
+    page: number;
+    isAppend?: boolean;
 }

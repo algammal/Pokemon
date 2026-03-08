@@ -1,13 +1,13 @@
 import enums from "../enums/enums";
 
-import type { BaseStatusProps } from "../types/PokemonDetailTypes";
+import type { BaseStatusProps ,Stat} from "../types/PokemonDetailTypes";
 
 const BaseStatus = ({ stats }: BaseStatusProps) => {
     return (
         <>
             <h2 className="text-xl font-bold text-gray-900 mb-4">{enums.pageText.BASE_STATS}</h2>
             <div className="space-y-3 mb-8">
-                {stats.map((s: any) => {
+                {stats.map((s: Stat) => {
                     const statName = s.stat.name.replace('special-attack', 'Sp. Attack').replace('special-defense', 'Sp. Defense');
                     return (
                         <div key={s.stat.name} className="w-full">
