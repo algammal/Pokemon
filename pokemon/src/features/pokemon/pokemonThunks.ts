@@ -7,7 +7,7 @@ export const fetchPokemon = createAsyncThunk(
     const offset = (page - 1) * limit;
 
     const res = await fetch(
-      `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
+      `${import.meta.env.VITE_POKEMON_API_BASE_URL}?limit=${limit}&offset=${offset}`
     );
 
     const data = await res.json();
