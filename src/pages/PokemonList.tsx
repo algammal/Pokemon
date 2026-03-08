@@ -5,8 +5,9 @@ import type { RootState, AppDispatch } from "../stores/store";
 import PokemonCard from "../components/PokemonCard";
 import Pagination from "../components/Pagination";
 import { setTab } from "../features/tabs/tabs";
+import { setPage } from "../features/pokemon/pokemonSlice";
 import PokemonCardSkeleton from "../components/PokemonCardSkeleton";
-import type {Pokemon} from '../types/pokemon'
+import type { Pokemon } from '../types/pokemon'
 import enums from "../enums/enums";
 
 const PokemonList = () => {
@@ -29,7 +30,10 @@ const PokemonList = () => {
   const handleTabChange = (
     tabName: (typeof enums.tabs)[keyof typeof enums.tabs],
   ) => {
-    dispatch(setTab(tabName));
+    if (tab !== tabName) {
+      dispatch(setTab(tabName));
+      dispatch(setPage(1));
+    }
   };
   return (
     <div className={`min-h-screen py-12 px-4 sm:px-6 lg:px-8 font-sans transition-colors duration-300 ${tab === enums.tabs.INFINITE_SCROLL ? 'bg-[#f0fdf4]' : 'bg-[#f3f7fb]'}`}>
@@ -70,14 +74,14 @@ const PokemonList = () => {
 
         {loading && (tab === enums.tabs.PAGE_CONTROL || page === 1) ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-            {Array.from({ length: 20 }).map((_, index:number) => (
+            {Array.from({ length: 20 }).map((_, index: number) => (
               <PokemonCardSkeleton key={`skeleton-${index}`} />
             ))}
           </div>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-              {pokemon.map((pokemon:Pokemon,key:number) => (
+              {pokemon.map((pokemon: Pokemon, key: number) => (
                 <PokemonCard key={key} name={pokemon.name} url={pokemon.url} />
               ))}
             </div>
