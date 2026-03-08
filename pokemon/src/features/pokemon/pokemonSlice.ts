@@ -2,18 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { fetchPokemon } from "./pokemonThunks";
 import enums from "../../enums/enums";
 
-interface Pokemon {
-  name: string;
-  url: string;
-}
-
-interface PokemonState {
-  pokemon: Pokemon[];
-  page: number;
-  count: number;
-  loading: boolean;
-  error: string | null;
-}
+import type { PokemonState } from "../../types/PokemonListTypes";
 
 const initialState: PokemonState = {
   pokemon: [],

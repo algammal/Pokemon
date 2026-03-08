@@ -1,9 +1,6 @@
+import { Link } from "react-router-dom";
 
-
-interface PokemonCardProps {
-  name: string;
-  url: string;
-}
+import type { PokemonCardProps } from "../types/PokemonListTypes";
 
 const PokemonCard = ({ name, url }: PokemonCardProps) => {
   const id = url?.split("/").filter(Boolean).pop() || "1";
@@ -12,7 +9,7 @@ const PokemonCard = ({ name, url }: PokemonCardProps) => {
   const image = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 p-4 flex flex-col items-center">
+    <Link to={`/${id}`} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 p-4 flex flex-col items-center">
       <div className="w-full bg-[#f3f4f7] rounded-lg aspect-auto py-6 flex items-center justify-center mb-4">
         <img src={image} alt={name} className="w-32 h-32 object-contain drop-shadow-md" />
       </div>
@@ -20,7 +17,7 @@ const PokemonCard = ({ name, url }: PokemonCardProps) => {
         {name}
       </h3>
       <span className="text-gray-400 text-sm mt-1 mb-2">#{paddedId}</span>
-    </div>
+    </Link>
   );
 };
 
